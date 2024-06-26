@@ -9,7 +9,7 @@ To standup the environment:
 
 1. Follow the `steps` file in `/simple` folder for simple plain text, up to the line that says "Label the namespace".
 
-2. Follow the `steps file in `/manual-mtls` folder for doing mTLS the hard way.
+2. Follow the `steps` file in `/manual-mtls` folder for doing mTLS the hard way.
 
 3. Follow the `steps` file in `/simple` folder for simple plain text, from the line that says "Label the namespace" to do mtls the simple way!
    
