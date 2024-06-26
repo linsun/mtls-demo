@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: curl-client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: curl-client
+  labels:
+    app: curl-client
+    service: curl-client
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: curl-client
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curl-client
+  template:
+    metadata:
+      labels:
+        app: curl-client
+    spec:
+      terminationGracePeriodSeconds: 0
+      serviceAccountName: curl-client
+      containers:
+      - name: curl-client
+        image: curlimages/curl
+        command: ["/bin/sleep", "infinity"]
+        imagePullPolicy: IfNotPresent
+---

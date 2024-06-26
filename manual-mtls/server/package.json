@@ -1,0 +1,11 @@
+{
+    "scripts": {
+      "start": "node Server.js"
+    },
+    "dependencies": {
+        "fs": "^0.0.1-security",
+        "http2": "^3.3.7",
+        "https": "^1.0.0"
+    },
+    "private": true
+  }

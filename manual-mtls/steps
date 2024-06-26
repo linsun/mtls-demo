@@ -1,0 +1,29 @@
+# generate server key
+openssl genpkey -out server.key -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -aes-128-cbc
+
+# generate server CSR
+openssl req -new  -key server.key -out server.csr
+# optional: view the CSR
+openssl req -in server/server.csr -noout -text
+
+# request a new server cert using the CSR
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+# optional: step through the server cert
+cat server/server.crt | step certificate inspect -
+
+# start the server & client
+node Server.js
+
+# generate client key/CSR/cert
+openssl genpkey -out client.key -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -aes-128-cbc
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -days 365 -in client.csr -signkey client.key -out client.crt
+
+kubectl apply -f mtls-server.yaml
+kubectl apply -f curl-mtls-client.yaml
+
+kubectl exec deploy/curl-mtls-client -c curl-mtls-client -- curl -i https://mtls-server:3000 --cacert server.crt --cert client.crt --key client.key --pass linsun
+
+# optional testing local
+curl -i https://localhost:3000 --cacert server.crt --cert client.crt --key client.key -k --pass linsun
+
