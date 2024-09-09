@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: server
+spec:
+  parentRefs:
+  - group: ""
+    kind: Service
+    name: server
+    port: 3000
+  rules:
+  - matches:
+    - headers:
+      - name: user
+        value: linsun
+    backendRefs:    
+    - name: server-v2
+      port: 3000
+  - backendRefs:
+    - name: server-v1
+      port: 3000

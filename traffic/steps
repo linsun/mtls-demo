@@ -1,0 +1,45 @@
+kubectl apply -f server.yaml
+kubectl apply -f client.yaml
+
+kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
+
+# Label the namespace
+kubectl label namespace default istio.io/dataplane-mode=ambient
+
+for i in {1..1000}
+do
+  kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
+  sleep 0.1
+done
+
+# traffic control the hard way
+kubectl apply -f serverv2.yaml
+kubectl scale deployment/server-v1 --replicas=9
+
+for i in {1..100}
+do
+  kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
+  sleep 0.1
+done
+
+# traffic shift example 1
+kubectl scale deployment/server-v1 --replicas=1
+
+kubectl apply -f route-v1-90-v1-10.yaml
+
+for i in {1..100}
+do
+  kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
+  sleep 0.1
+done
+
+# traffic shift example 2
+kubectl apply -f route-v2-header.yaml
+
+kubectl exec deploy/client -c client -- curl -s "http://server:3000/" -H "user: linsun"
+
+kubectl exec deploy/client -c client -- curl -s "http://server:3000/" -H "user: jason"
+
+
+
+
