@@ -1,41 +1,41 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: curl-mtls-client
+  name: client
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: curl-mtls-client
+  name: client
   labels:
-    app: curl-mtls-client
-    service: curl-mtls-client
+    app: client
+    service: client
 spec:
   ports:
   - port: 80
     name: http
   selector:
-    app: curl-mtls-client
+    app: client
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: curl-mtls-client
+  name: client
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: curl-mtls-client
+      app: client
   template:
     metadata:
       labels:
-        app: curl-mtls-client
+        app: client
     spec:
       terminationGracePeriodSeconds: 0
-      serviceAccountName: curl-mtls-client
+      serviceAccountName: client
       containers:
-      - name: curl-mtls-client
-        image: linsun/curl-mtls-client:latest
+      - name: client
+        image: curlimages/curl
         command: ["/bin/sleep", "infinity"]
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
 ---

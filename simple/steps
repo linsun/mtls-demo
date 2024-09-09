@@ -1,13 +1,13 @@
 kubectl apply -f server.yaml
-kubectl apply -f curl-client.yaml
+kubectl apply -f client.yaml
 
-kubectl exec deploy/curl-client -c curl-client -- curl -s "http://server:3000/"
+kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
 
 kubectl label namespace default istio.io/dataplane-mode=ambient
 
 for i in {2..1000}
 do
-  kubectl exec deploy/curl-client -c curl-client -- curl -s "http://server:3000/"
+  kubectl exec deploy/client -c client -- curl -s "http://server:3000/"
   sleep 0.1
 done
 
