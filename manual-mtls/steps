@@ -20,9 +20,9 @@ openssl req -new -key client.key -out client.csr
 openssl x509 -req -days 365 -in client.csr -signkey client.key -out client.crt
 
 kubectl apply -f mtls-server.yaml
-kubectl apply -f curl-mtls-client.yaml
+kubectl apply -f mtls-client.yaml
 
-kubectl exec deploy/curl-mtls-client -c curl-mtls-client -- curl -i https://mtls-server:3000 --cacert server.crt --cert client.crt --key client.key --pass linsun
+kubectl exec deploy/mtls-client -c mtls-client -- curl -i https://mtls-server:3000 --cacert server.crt --cert client.crt --key client.key --pass linsun
 
 # optional testing local
 curl -i https://localhost:3000 --cacert server.crt --cert client.crt --key client.key -k --pass linsun

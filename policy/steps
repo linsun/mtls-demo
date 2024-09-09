@@ -39,14 +39,14 @@ kubectl apply -f waypoint.yaml
 kubectl label namespace default istio.io/use-waypoint=waypoint
 
 # enable L7 authz policy, show what is working, what is not working.
-kubectl apply -f curl-to-httpbin-l7.yaml
+kubectl apply -f client-to-httpbin-l7.yaml
 
 # not working
-kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin:8000/headers
-kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin.default:8000/status/418
+kubectl exec deploy/client -c client -- curl http://httpbin:8000/headers
+kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/status/418
 
 # working
-kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin:8000/headers -H 'x-test-me: approved'
+kubectl exec deploy/client -c client -- curl http://httpbin:8000/headers -H 'x-test-me: approved'
 
 # explain ztunnel create certificates and spiffe id and how
 ./istioctl zc certificates
