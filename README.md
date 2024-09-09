@@ -1,6 +1,6 @@
 The following has been tested on a Macbook M2 pro:
 
-Following [instruction](https://istio.io/latest/docs/setup/getting-started/#download) to download Istio 1.22.0 which includes the `istioctl` CLI.
+Following [instruction](https://istio.io/latest/docs/setup/getting-started/#download) to download Istio 1.23.0 which includes the `istioctl` CLI.
 To standup the environment:
 
 ```
