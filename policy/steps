@@ -1,0 +1,57 @@
+kubectl apply -f client.yaml
+kubectl apply -f httpbin.yaml
+
+# deploy hacker ns & curl client
+kubectl create ns hacker
+kubectl apply -f client.yaml -n hacker
+
+# show stuff continue to be working.
+kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/headers
+kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/status/418
+kubectl exec deploy/client -n hacker -c client -- curl http://httpbin.default:8000/headers
+kubectl exec deploy/client -n hacker -c client -- curl http://httpbin.default:8000/status/418
+
+kubectl label namespace default istio.io/dataplane-mode=ambient
+
+# calling from hacker doesn't work
+kubectl exec deploy/client -c client -n hacker -- curl http://httpbin.default:8000/status/418
+
+# hacker gets smart and made it work
+kubectl label namespace hacker istio.io/dataplane-mode=ambient
+kubectl exec deploy/client -c client -n hacker -- curl http://httpbin.default:8000/status/418
+
+
+# enable L4 authz policy, get should work
+kubectl apply -f deny-all.yaml
+kubectl apply -f client-to-httpbin-l4.yaml
+
+# show stuff continue to be working.
+kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/headers
+kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/status/418
+
+# show hacker ns can't call
+kubectl exec deploy/client -n hacker -c client -- curl http://httpbin.default:8000/headers
+kubectl exec deploy/client -n hacker -c client -- curl http://httpbin.default:8000/status/418
+
+
+# deploy waypoint
+kubectl apply -f waypoint.yaml
+kubectl label namespace default istio.io/use-waypoint=waypoint
+
+# enable L7 authz policy, show what is working, what is not working.
+kubectl apply -f curl-to-httpbin-l7.yaml
+
+# not working
+kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin:8000/headers
+kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin.default:8000/status/418
+
+# working
+kubectl exec deploy/curl-client -c curl-client -- curl http://httpbin:8000/headers -H 'x-test-me: approved'
+
+# explain ztunnel create certificates and spiffe id and how
+./istioctl zc certificates
+./istioctl zc certificates -o yaml
+
+echo $CERT | base64 --decode | step certificate inspect - 
+
+

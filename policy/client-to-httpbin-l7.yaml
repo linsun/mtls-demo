@@ -1,0 +1,39 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-client-to-httpbin-waypoint
+  namespace: default
+spec:
+  targetRefs:
+  - kind: Service
+    group: ""
+    name: httpbin
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/default/sa/client"]
+    to: 
+    - operation:
+        methods: ["GET"]
+        paths: ["/headers"]
+    when:
+    - key: request.headers[x-test-me]
+      values: ["approved"]
+    - key: source.namespace
+      values: ["default"]          
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-waypoint-to-httpbin
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/default/sa/waypoint"]
