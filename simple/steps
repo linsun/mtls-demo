@@ -11,5 +11,9 @@ do
   sleep 0.1
 done
 
-
+for i in {2..1000}
+do
+  kubectl exec -it deploy/mtls-client -- curl https://mtls-server:3000/ --cacert server.crt --cert client.crt --key client.key --pass linsun
+  sleep 0.1
+done
 

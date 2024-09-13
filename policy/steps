@@ -49,8 +49,8 @@ kubectl exec deploy/client -c client -- curl http://httpbin.default:8000/status/
 kubectl exec deploy/client -c client -- curl http://httpbin:8000/headers -H 'x-test-me: approved'
 
 # explain ztunnel create certificates and spiffe id and how
-./istioctl zc certificates
-./istioctl zc certificates -o yaml
+istioctl zc certificates
+istioctl zc certificates -o yaml
 
 echo $CERT | base64 --decode | step certificate inspect - 
 
